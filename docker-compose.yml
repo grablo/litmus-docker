@@ -1,0 +1,47 @@
+# ============================================================================
+# Litmus NVR — Docker (camera AI / CCTV — local screen on port 8128)
+#   Run:    docker compose up -d
+#   Access: open http://<this-host>:8128/ (local screen — the setup code is in the log on first start)
+#           or pair it in the Litmus NVR web app (app.litmusnvr.com).
+# ============================================================================
+services:
+  litmus:
+    image: ghcr.io/litmusnvr/litmus-nvr:${LITMUS_VERSION:-latest}
+    container_name: litmus
+    # Host networking for real-time connectivity (recommended on a real Linux host).
+    # (Docker Desktop on Windows/macOS has limited host networking → bridge + outbound)
+    network_mode: host
+    volumes:
+      - litmus-id:/data              # device identity — keep this to stay paired
+      - litmus-config:/etc/litmus    # saved settings (incl. encrypted secure values)
+      - litmus-data:/var/litmus      # downloaded user files / datalog
+      - litmus-log:/var/log/litmus   # logs
+      - litmus-models:/usr/share/litmus        # AI / speech / LPR models + face-recognition DB
+      - litmus-secure:/var/lib/.syscache-litmus       # security key/salt for the encrypted secure values
+      - litmus-zigbee:/usr/lib/litmus/zigbee   # zigbee runtime
+      # ── Audio (desktop host: PulseAudio socket) ──
+      # - /run/user/1000/pulse/native:/run/pulse/native
+    # environment:
+    #   - PULSE_SERVER=unix:/run/pulse/native
+    # ── Hardware passthrough (real Linux host only — one line per device) ──
+    #   Network/cloud/AI-cloud features need none of this. Add only what you use.
+    # devices:
+    #   - /dev/video0      # USB camera (AI video) — also add /dev/media0 + the udev mount below
+    #   - /dev/media0      # USB camera (V4L2 enumeration)
+    #   - /dev/ttyUSB0     # USB serial (Modbus RTU)
+    #   - /dev/ttyACM0     # Zigbee dongle
+    #   - /dev/snd         # audio (also set LITMUS_START_PULSE=1)
+    # volumes:
+    #   - /run/udev:/run/udev:ro   # USB camera device enumeration (no privileged needed, controller 1.19.2+)
+    # environment:
+    #   - LITMUS_START_PULSE=1
+    restart: unless-stopped
+
+volumes:
+  litmus-id:
+  litmus-config:
+  litmus-data:
+  litmus-log:
+  litmus-models:
+  litmus-secure:
+  litmus-zigbee:

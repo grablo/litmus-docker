@@ -1,0 +1,9 @@
+# Keep the build context minimal — the image only needs the Dockerfile + entrypoint.sh.
+.git
+.github
+*.md
+.env
+.env.example
+docker-compose.yml
+.gitignore
+.gitattributes
