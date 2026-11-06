@@ -57,7 +57,7 @@ Device passthrough needs a real Linux host. Docker Desktop on Windows and macOS 
 Images are published to `ghcr.io/litmusnvr/litmus-nvr` for `linux/amd64` and `linux/arm64`. Each image is built from the official release `.deb`. To build it yourself:
 
 ```bash
-docker build --build-arg LITMUS_VERSION=3.0.0 -t ghcr.io/litmusnvr/litmus-nvr:3.0.0 .
+docker build --build-arg LITMUS_VERSION=2.2.1 -t ghcr.io/litmusnvr/litmus-nvr:2.2.1 .
 ```
 
 ## Logs

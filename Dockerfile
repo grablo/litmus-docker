@@ -6,7 +6,7 @@
 # and extracting its files (the package install scripts are not run).
 #
 # Build:
-#   docker build --build-arg LITMUS_VERSION=3.0.0 -t ghcr.io/litmusnvr/litmus-nvr:3.0.0 .
+#   docker build --build-arg LITMUS_VERSION=2.2.1 -t ghcr.io/litmusnvr/litmus-nvr:2.2.1 .
 #   (multi-arch builds are handled by .github/workflows/build-image.yml)
 #
 # Base image: debian:13-slim (trixie).
@@ -38,7 +38,7 @@ FROM debian:13-slim
 # Litmus version to fetch. The .deb architecture (amd64|arm64) is derived at build
 # time from the image itself via `dpkg --print-architecture` — robust under buildx
 # emulation and any builder that doesn't pass TARGETARCH.
-ARG LITMUS_VERSION=3.0.0
+ARG LITMUS_VERSION=2.2.1
 
 # The deb adds /usr/share/litmus/product.json (edition marker read by the controller).
 

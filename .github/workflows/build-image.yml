@@ -1,7 +1,7 @@
 name: build-image
 
 # On a version tag push or a manual run: build the amd64 + arm64 multi-arch image and push to GHCR.
-#   tag v3.0.0 → ghcr.io/litmusnvr/litmus-nvr:3.0.0 + :latest
+#   tag v2.2.1 → ghcr.io/litmusnvr/litmus-nvr:2.2.1 + :latest
 #
 # Each arch is built on its OWN native runner (no QEMU emulation):
 #   amd64   → ubuntu-latest      (x86_64 native)
@@ -16,7 +16,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Litmus version (e.g. 3.0.0)'
+        description: 'Litmus version (e.g. 2.2.1)'
         required: true
 
 permissions:
