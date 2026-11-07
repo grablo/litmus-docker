@@ -1,7 +1,7 @@
 name: build-image
 
 # On a version tag push or a manual run: build the amd64 + arm64 multi-arch image and push to GHCR.
-#   tag v2.2.1 → ghcr.io/litmusnvr/litmus-nvr:2.2.1 + :latest
+#   tag v2.2.1 → ghcr.io/grablo/litmus-nvr:2.2.1 + :latest
 #
 # Each arch is built on its OWN native runner (no QEMU emulation):
 #   amd64   → ubuntu-latest      (x86_64 native)
@@ -51,7 +51,7 @@ jobs:
             v="${GITHUB_REF_NAME#v}"
           fi
           echo "v=$v" >> "$GITHUB_OUTPUT"
-          echo "image=ghcr.io/litmusnvr/litmus-nvr" >> "$GITHUB_OUTPUT"
+          echo "image=ghcr.io/grablo/litmus-nvr" >> "$GITHUB_OUTPUT"
 
       - uses: docker/setup-buildx-action@v4
 
@@ -100,7 +100,7 @@ jobs:
             v="${GITHUB_REF_NAME#v}"
           fi
           echo "v=$v" >> "$GITHUB_OUTPUT"
-          echo "image=ghcr.io/litmusnvr/litmus-nvr" >> "$GITHUB_OUTPUT"
+          echo "image=ghcr.io/grablo/litmus-nvr" >> "$GITHUB_OUTPUT"
 
       - name: Download digests
         uses: actions/download-artifact@v4

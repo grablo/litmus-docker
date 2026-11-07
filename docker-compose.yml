@@ -6,7 +6,7 @@
 # ============================================================================
 services:
   litmus:
-    image: ghcr.io/litmusnvr/litmus-nvr:${LITMUS_VERSION:-latest}
+    image: ghcr.io/grablo/litmus-nvr:${LITMUS_VERSION:-latest}
     container_name: litmus
     # Host networking for real-time connectivity (recommended on a real Linux host).
     # (Docker Desktop on Windows/macOS has limited host networking → bridge + outbound)

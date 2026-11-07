@@ -5,7 +5,7 @@ Run [Litmus NVR](https://litmusnvr.com) as a Docker container: AI search and ale
 ## Quick start
 
 ```bash
-git clone https://github.com/litmusnvr/litmus-docker.git
+git clone https://github.com/grablo/litmus-docker.git
 cd litmus-docker
 docker compose up -d
 ```
@@ -25,7 +25,7 @@ Update by pulling a newer image (the container does not update itself):
 docker compose pull && docker compose up -d
 ```
 
-On Home Assistant OS or Supervised, use the [add-on](https://github.com/litmusnvr/litmus-hass-addons) instead.
+On Home Assistant OS or Supervised, use the [add-on](https://github.com/grablo/litmus-hass-addons) instead.
 
 ## Persistent data
 
@@ -54,10 +54,10 @@ Device passthrough needs a real Linux host. Docker Desktop on Windows and macOS 
 
 ## Image
 
-Images are published to `ghcr.io/litmusnvr/litmus-nvr` for `linux/amd64` and `linux/arm64`. Each image is built from the official release `.deb`. To build it yourself:
+Images are published to `ghcr.io/grablo/litmus-nvr` for `linux/amd64` and `linux/arm64`. Each image is built from the official release `.deb`. To build it yourself:
 
 ```bash
-docker build --build-arg LITMUS_VERSION=2.2.1 -t ghcr.io/litmusnvr/litmus-nvr:2.2.1 .
+docker build --build-arg LITMUS_VERSION=2.2.1 -t ghcr.io/grablo/litmus-nvr:2.2.1 .
 ```
 
 ## Logs

@@ -6,7 +6,7 @@
 # and extracting its files (the package install scripts are not run).
 #
 # Build:
-#   docker build --build-arg LITMUS_VERSION=2.2.1 -t ghcr.io/litmusnvr/litmus-nvr:2.2.1 .
+#   docker build --build-arg LITMUS_VERSION=2.2.1 -t ghcr.io/grablo/litmus-nvr:2.2.1 .
 #   (multi-arch builds are handled by .github/workflows/build-image.yml)
 #
 # Base image: debian:13-slim (trixie).
@@ -52,7 +52,7 @@ ENV GRABLO_CONTAINER=1
 # OCI image metadata
 LABEL org.opencontainers.image.title="Litmus NVR" \
       org.opencontainers.image.description="Litmus NVR controller as a Docker container — network/IoT/AI/remote-control alongside Home Assistant." \
-      org.opencontainers.image.source="https://github.com/litmusnvr/litmus-docker" \
+      org.opencontainers.image.source="https://github.com/grablo/litmus-docker" \
       org.opencontainers.image.url="https://litmusnvr.com" \
       org.opencontainers.image.vendor="Litmus NVR" \
       org.opencontainers.image.version="${LITMUS_VERSION}" \
