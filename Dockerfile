@@ -105,6 +105,6 @@ WORKDIR /usr/bin/litmus
 # the local screen and recording work without it. (The old check searched the log for
 # "MQTT connected", and that line stays in the log volume, so it stayed healthy forever.)
 HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
-  CMD curl -fsS --noproxy '*' --max-time 4 http://127.0.0.1:8128/api/v1/health >/dev/null || exit 1
+  CMD [ "$GRABLO_LOCAL_SERVER" = "0" ] || curl -fsS --noproxy '*' --max-time 4 http://127.0.0.1:8128/api/v1/health >/dev/null || exit 1
 
 ENTRYPOINT ["/entrypoint.sh"]
