@@ -81,11 +81,14 @@ RUN set -eux; \
     cp -a /tmp/litmus-root/usr/bin/litmus /usr/bin/; \
     cp -a /tmp/litmus-root/usr/lib/litmus /usr/lib/; \
     cp -a /tmp/litmus-root/usr/share/litmus /usr/share/; \
+    # License and copyright. Outside every volume, so they always follow the image.
+    cp -a /tmp/litmus-root/usr/share/doc/litmus /usr/share/doc/ 2>/dev/null || true; \
     # Image-owned copy of what must follow the image, not the volume: compose mounts a volume on /usr/share/litmus
-    # (models, face DB), which hides the image's local screen (www/spot), message catalogs (locales/<code>.json) and
-    # edition marker (product.json) after the first run. entrypoint.sh copies these back on every start.
+    # (models, face DB), which hides the image's local screen (www/spot), default sounds (sounds), message catalogs
+    # (locales/<code>.json) and edition marker (product.json) after the first run. entrypoint.sh copies these back on every start.
     mkdir -p /opt/litmus-image; \
     cp -a /tmp/litmus-root/usr/share/litmus/www /opt/litmus-image/www 2>/dev/null || true; \
+    cp -a /tmp/litmus-root/usr/share/litmus/sounds /opt/litmus-image/sounds 2>/dev/null || true; \
     cp -a /tmp/litmus-root/usr/share/litmus/locales /opt/litmus-image/locales 2>/dev/null || true; \
     cp -a /tmp/litmus-root/usr/share/litmus/product.json /opt/litmus-image/product.json 2>/dev/null || true; \
     rm -rf /tmp/litmus.deb /tmp/litmus-root; \
@@ -97,10 +100,11 @@ RUN sed -i 's/\r$//' /entrypoint.sh \
 
 WORKDIR /usr/bin/litmus
 
-# Liveness: litmus has reached the Litmus cloud (MQTT). Basic readiness signal —
-# litmus runs as PID 1 so the container exits if it dies; this also flags
-# "started but never connected" (broken network/cloud).
+# Liveness: the local server answers right now. litmus runs as PID 1, so the container
+# exits if it dies; this also flags a hung process. It says nothing about the internet:
+# the local screen and recording work without it. (The old check searched the log for
+# "MQTT connected", and that line stays in the log volume, so it stayed healthy forever.)
 HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
-  CMD grep -q "MQTT connected" /var/log/litmus/log.txt 2>/dev/null || exit 1
+  CMD curl -fsS --noproxy '*' --max-time 4 http://127.0.0.1:8128/api/v1/health >/dev/null || exit 1
 
 ENTRYPOINT ["/entrypoint.sh"]

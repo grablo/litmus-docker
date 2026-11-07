@@ -24,7 +24,7 @@ echo "[entrypoint] device identity ready"
 ldconfig /usr/lib/litmus 2>/dev/null || true
 
 # 2b) Files that belong to the image, not to the /usr/share/litmus volume (models, face DB stay in the volume):
-#     the local screen (www/spot, port 8128), the message catalogs (locales/<code>.json — read by the controller,
+#     the local screen (www/spot, port 8128), the default sounds (sounds), the message catalogs (locales/<code>.json — read by the controller,
 #     src/litmus-common/LocaleCatalog.h) and the edition marker (product.json — Litmus NVR image only).
 #     Refresh them from the image on every start so an image update reaches existing volumes.
 SHARE=/usr/share/litmus
@@ -32,6 +32,8 @@ if [ -d /opt/litmus-image ]; then
     mkdir -p "$SHARE"
     rm -rf "$SHARE/www"
     [ -d /opt/litmus-image/www ] && cp -a /opt/litmus-image/www "$SHARE/www"
+    rm -rf "$SHARE/sounds"
+    [ -d /opt/litmus-image/sounds ] && cp -a /opt/litmus-image/sounds "$SHARE/sounds"
     rm -rf "$SHARE/locales"
     [ -d /opt/litmus-image/locales ] && cp -a /opt/litmus-image/locales "$SHARE/locales"
     if [ -f /opt/litmus-image/product.json ]; then

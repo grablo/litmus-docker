@@ -68,6 +68,10 @@ docker logs -f litmus
 
 Set `LITMUS_LOG_STDOUT=0` to stop mirroring the log file to the container output.
 
+## Health check
+
+The image's health check calls the local server at `http://127.0.0.1:8128/api/v1/health`. It shows whether Litmus NVR is responding, not whether the host has internet access. If you turn off the local server or change its port in `local_server.json`, set `healthcheck: disable: true` in `docker-compose.yml`.
+
 ## License
 
 This repository contains only packaging. Litmus NVR itself is proprietary software of Grablo Inc.
