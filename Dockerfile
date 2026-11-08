@@ -54,7 +54,7 @@ LABEL org.opencontainers.image.title="Litmus NVR" \
       org.opencontainers.image.description="Litmus NVR controller as a Docker container — network/IoT/AI/remote-control alongside Home Assistant." \
       org.opencontainers.image.source="https://github.com/grablo/litmus-docker" \
       org.opencontainers.image.url="https://litmusnvr.com" \
-      org.opencontainers.image.vendor="Litmus NVR" \
+      org.opencontainers.image.vendor="Grablo Inc." \
       org.opencontainers.image.version="${LITMUS_VERSION}" \
       org.opencontainers.image.licenses="LicenseRef-Proprietary"
 
