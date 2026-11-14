@@ -64,6 +64,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       libusb-1.0-0 libpq5 unixodbc libpulse0 libvulkan1 \
       pulseaudio pulseaudio-utils alsa-utils libharfbuzz0b libxml2 \
       libfreetype6 mosquitto ca-certificates curl \
+      avahi-daemon avahi-utils dbus \
       libxcursor1 libxinerama1 libxrandr2 libxi6 libwayland-cursor0 \
       libgstreamer1.0-0 libgstreamer-plugins-base1.0-0 \
  && rm -rf /var/lib/apt/lists/*
@@ -72,6 +73,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 #   끊겨 `libXi.so.6 => not found` 가 났다(본체와 미디어 라이브러리 둘 다).
 #   배포 중인 1.29.1(bullseye) 이미지는 미해결 0 건이라 이것은 전환이 만든 회귀다.
 #   전이 의존에 기대면 베이스가 바뀔 때마다 같은 일이 난다 — 필요한 것은 적어 둔다.
+
+# avahi-daemon · avahi-utils · dbus: Home Assistant finds Litmus by itself (zeroconf _litmus-nvr._tcp). The controller publishes with
+#   avahi-publish-service when it is there (MdnsAdvertiser.cpp); entrypoint.sh starts dbus + avahi in the container unless the host's
+#   avahi socket is mounted or LITMUS_AVAHI=0 — the official Homebridge image does the same (ENABLE_AVAHI). Needs host networking.
 
 # Download the public release .deb and extract its files (install scripts not run)
 RUN set -eux; \

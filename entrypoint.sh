@@ -60,6 +60,30 @@ fi
 #    Only one litmus ever runs in this container, so any lock present here is stale.
 rm -f /run/litmus.pid
 
+# 4b) mDNS for Home Assistant auto-discovery (_litmus-nvr._tcp — Settings › Integrations › Home Assistant in Litmus).
+#     The controller publishes through avahi (avahi-publish-service over D-Bus). Three cases, as the Homebridge image (ENABLE_AVAHI)
+#     and Scrypted (host avahi socket) do it:
+#       · the host's avahi is mounted (/var/run/dbus + /var/run/avahi-daemon/socket) → use it, start nothing here
+#       · LITMUS_AVAHI=0 → no advertising (add Litmus in Home Assistant by its address)
+#       · otherwise → start dbus + avahi-daemon in the container. With host networking and an avahi-daemon already on the host,
+#         set LITMUS_AVAHI=0 or mount the host socket instead (two responders on one host make mDNS unreliable).
+if [ -S /var/run/avahi-daemon/socket ]; then
+    echo "[entrypoint] mDNS: using the host's avahi-daemon"
+elif [ "${LITMUS_AVAHI:-1}" = "1" ] && command -v avahi-daemon >/dev/null 2>&1; then
+    mkdir -p /run/dbus /var/run/avahi-daemon
+    rm -f /run/dbus/pid /run/avahi-daemon/pid /var/run/avahi-daemon/pid
+    if dbus-daemon --system --fork 2>/dev/null; then
+        # The container's hostname is often a random id — publish under it anyway (Litmus's own name is in the service name).
+        avahi-daemon --daemonize --no-chroot --no-drop-root 2>/dev/null \
+            && echo "[entrypoint] mDNS: avahi-daemon started in the container" \
+            || echo "[entrypoint] WARN: avahi-daemon failed to start — Home Assistant will not find Litmus by itself (add it by address)"
+    else
+        echo "[entrypoint] WARN: dbus failed to start — no mDNS (add Litmus in Home Assistant by its address)"
+    fi
+else
+    echo "[entrypoint] mDNS: off (LITMUS_AVAHI=0)"
+fi
+
 # 5) Mirror litmus's file log to the container stdout so `docker logs` works.
 #    (litmus logs to /var/log/litmus/log.txt by default.) tail -F retries until
 #    the file appears and follows rotation. Opt out with LITMUS_LOG_STDOUT=0.

@@ -11,6 +11,11 @@ services:
     # Host networking for real-time connectivity (recommended on a real Linux host).
     # (Docker Desktop on Windows/macOS has limited host networking → bridge + outbound)
     network_mode: host
+    # Home Assistant finds Litmus by itself (zeroconf). The container runs its own avahi-daemon by default. If this host already
+    # runs avahi-daemon, use it instead — uncomment the two volume lines below (or set LITMUS_AVAHI=0 to turn advertising off and
+    # add Litmus in Home Assistant by its address).
+    # environment:
+    #   - LITMUS_AVAHI=0
     volumes:
       - litmus-id:/data              # device identity — keep this to stay paired
       - litmus-config:/etc/litmus    # saved settings (incl. encrypted secure values)
@@ -19,6 +24,9 @@ services:
       - litmus-models:/usr/share/litmus        # AI / speech / LPR models + face-recognition DB
       - litmus-secure:/var/lib/.syscache-litmus       # security key/salt for the encrypted secure values
       - litmus-zigbee:/usr/lib/litmus/zigbee   # zigbee runtime
+      # Use the host's avahi-daemon for Home Assistant discovery (see above):
+      # - /var/run/dbus:/var/run/dbus
+      # - /var/run/avahi-daemon/socket:/var/run/avahi-daemon/socket
       # ── Audio (desktop host: PulseAudio socket) ──
       # - /run/user/1000/pulse/native:/run/pulse/native
     # environment:

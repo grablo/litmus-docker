@@ -60,6 +60,16 @@ Images are published to `ghcr.io/grablo/litmus-nvr` for `linux/amd64` and `linux
 docker build --build-arg LITMUS_VERSION=2.2.1 -t ghcr.io/grablo/litmus-nvr:2.2.1 .
 ```
 
+## Home Assistant discovery
+
+Home Assistant finds Litmus by itself (Settings › Devices & services › Discovered) once Home Assistant is turned on in Litmus
+(Settings › Integrations). The container runs its own avahi-daemon for this — host networking is required (the default in
+`docker-compose.yml`).
+
+- If the host already runs avahi-daemon, mount its socket instead (the two commented volume lines in `docker-compose.yml`).
+  Two mDNS responders on one host make discovery unreliable.
+- `LITMUS_AVAHI=0` turns advertising off; add Litmus in Home Assistant by its address (shown in Litmus › Settings › Integrations).
+
 ## Logs
 
 ```bash
