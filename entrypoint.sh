@@ -67,6 +67,13 @@ rm -f /run/litmus.pid
 #       · LITMUS_AVAHI=0 → no advertising (add Litmus in Home Assistant by its address)
 #       · otherwise → start dbus + avahi-daemon in the container. With host networking and an avahi-daemon already on the host,
 #         set LITMUS_AVAHI=0 or mount the host socket instead (two responders on one host make mDNS unreliable).
+#     A container restart keeps /run, so the socket our own avahi left last time is still there — a marker we leave in that
+#     directory tells it from a mounted host socket (a host mount hides the marker). Without it a restarted container took its
+#     own dead socket for the host's, started nothing and stopped advertising for good.
+AVAHI_OWN=/var/run/avahi-daemon/.litmus-started
+if [ -e "$AVAHI_OWN" ]; then
+    rm -f /var/run/avahi-daemon/socket /run/dbus/system_bus_socket "$AVAHI_OWN"   # both ours (left by the last start)
+fi
 if [ -S /var/run/avahi-daemon/socket ]; then
     echo "[entrypoint] mDNS: using the host's avahi-daemon"
 elif [ "${LITMUS_AVAHI:-1}" = "1" ] && command -v avahi-daemon >/dev/null 2>&1; then
@@ -75,6 +82,7 @@ elif [ "${LITMUS_AVAHI:-1}" = "1" ] && command -v avahi-daemon >/dev/null 2>&1; 
     if dbus-daemon --system --fork 2>/dev/null; then
         # The container's hostname is often a random id — publish under it anyway (Litmus's own name is in the service name).
         avahi-daemon --daemonize --no-chroot --no-drop-root 2>/dev/null \
+            && touch "$AVAHI_OWN" \
             && echo "[entrypoint] mDNS: avahi-daemon started in the container" \
             || echo "[entrypoint] WARN: avahi-daemon failed to start — Home Assistant will not find Litmus by itself (add it by address)"
     else
