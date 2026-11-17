@@ -52,6 +52,9 @@ services:
     # environment:
     #   - TZ=America/New_York
     restart: unless-stopped
+    # Litmus closes recordings and its databases when stopped. Give it time (Docker's default is 10 s, and some
+    # setups use less) so `docker stop` / updates finish cleanly instead of being killed mid-write.
+    stop_grace_period: 30s
 
 volumes:
   litmus-id:
