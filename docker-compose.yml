@@ -43,6 +43,12 @@ services:
     #   - /run/udev:/run/udev:ro   # USB camera device enumeration (no privileged needed, controller 1.19.2+)
     # environment:
     #   - LITMUS_START_PULSE=1
+    # ── Time zone ──
+    #   Not required: the first time you open Litmus in a browser it sets the device's time zone to the browser's
+    #   (saved in litmus-config). To fix it yourself instead, set TZ — it then takes precedence and cannot be changed
+    #   from the app.
+    # environment:
+    #   - TZ=America/New_York
     restart: unless-stopped
 
 volumes:
