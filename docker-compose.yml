@@ -44,9 +44,11 @@ services:
     # environment:
     #   - LITMUS_START_PULSE=1
     # ── Time zone ──
-    #   Not required: the first time you open Litmus in a browser it sets the device's time zone to the browser's
-    #   (saved in litmus-config). To fix it yourself instead, set TZ — it then takes precedence and cannot be changed
-    #   from the app.
+    #   Litmus 2.4.0 and earlier: set TZ to your time zone. Without it the container runs on UTC, so recording
+    #   names, notification times and "Pick my own hours" schedules are off by your UTC offset.
+    #   Litmus 2.5.0 and later: not required — the first time you open Litmus in a browser it sets the device's
+    #   time zone to the browser's (saved in litmus-config). If you set TZ, it takes precedence and cannot be
+    #   changed from the app.
     # environment:
     #   - TZ=America/New_York
     restart: unless-stopped
