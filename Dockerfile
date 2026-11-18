@@ -103,8 +103,9 @@ RUN set -eux; \
     ldconfig /usr/lib/litmus
 
 COPY entrypoint.sh /entrypoint.sh
-RUN sed -i 's/\r$//' /entrypoint.sh \
- && chmod +x /entrypoint.sh /usr/bin/litmus/litmus
+COPY healthcheck.sh /usr/local/bin/litmus-healthcheck
+RUN sed -i 's/\r$//' /entrypoint.sh /usr/local/bin/litmus-healthcheck \
+ && chmod +x /entrypoint.sh /usr/local/bin/litmus-healthcheck /usr/bin/litmus/litmus
 
 WORKDIR /usr/bin/litmus
 
@@ -112,7 +113,9 @@ WORKDIR /usr/bin/litmus
 # exits if it dies; this also flags a hung process. It says nothing about the internet:
 # the local screen and recording work without it. (The old check searched the log for
 # "MQTT connected", and that line stays in the log volume, so it stayed healthy forever.)
+# It follows the device's own local_server.json (off on purpose = healthy, a moved port is asked
+# on that port) — the old inline check only knew GRABLO_LOCAL_SERVER and always asked 8128 (QA D-135).
 HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
-  CMD [ "$GRABLO_LOCAL_SERVER" = "0" ] || curl -fsS --noproxy '*' --max-time 4 http://127.0.0.1:8128/api/v1/health >/dev/null || exit 1
+  CMD ["/usr/local/bin/litmus-healthcheck"]
 
 ENTRYPOINT ["/entrypoint.sh"]
