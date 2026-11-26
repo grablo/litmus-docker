@@ -18,6 +18,24 @@ elif [ ! -s /etc/machine-id ]; then
         cp /etc/machine-id "${DATA_DIR}/machine-id" 2>/dev/null || true
     fi
 fi
+
+# 1b) Host name persistence (QA D-365, 2026-11-26)
+#    The controller ties its settings and secrets key to /etc/machine-id + /etc/hostname
+#    (litmus-controller src/grablo-common/Util_Crypto.cpp get_system_identifier). On a bridge
+#    network Docker gives every new container a random host name, so recreating the container
+#    for an image update changed the key, and the controller deleted the settings and secrets it
+#    could no longer read. Keep the first host name in the data volume and put it back into
+#    /etc/hostname on every start, as with machine-id above. Only the file changes; the kernel
+#    host name is left alone. With network_mode: host the saved name is the host's own name.
+if [ -s "${DATA_DIR}/hostname" ]; then
+    SAVED_HOSTNAME="$(head -n 1 "${DATA_DIR}/hostname")"
+    if [ -n "${SAVED_HOSTNAME}" ] && [ "$(head -n 1 /etc/hostname 2>/dev/null)" != "${SAVED_HOSTNAME}" ]; then
+        printf '%s\n' "${SAVED_HOSTNAME}" > /etc/hostname 2>/dev/null \
+            || echo "[entrypoint] WARN: could not restore the saved host name — settings may not be readable"
+    fi
+elif [ -s /etc/hostname ] && { [ -d "${DATA_DIR}" ] || mkdir -p "${DATA_DIR}" 2>/dev/null; }; then
+    head -n 1 /etc/hostname > "${DATA_DIR}/hostname" 2>/dev/null || true
+fi
 echo "[entrypoint] device identity ready"
 
 # 2) Library cache
